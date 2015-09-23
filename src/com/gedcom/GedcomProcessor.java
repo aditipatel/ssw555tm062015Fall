@@ -148,13 +148,7 @@ public class SSW555AgileProject {
 				}					
 			}
 			
-			for (Map.Entry<String, Individual> entry : individualList.entrySet()) {
-				System.out.println("Individual ID : " + entry.getKey() + " Name : " + entry.getValue().name);
-			}
-			
-			for (Map.Entry<String, Family> entry : familyList.entrySet()) {
-				System.out.println("Family ID : " + entry.getKey() + " Husband ID : " + entry.getValue().husbId+ " Husband Name : " + individualList.get(entry.getValue().husbId).name+ " Wife ID : " + entry.getValue().wifeId+ " wife Name : " + individualList.get(entry.getValue().wifeId).name);
-			}
+		
 			inputFileData.close();
 		}
 		catch(FileNotFoundException e) {
