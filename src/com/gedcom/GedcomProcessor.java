@@ -90,7 +90,7 @@ public class GedcomProcessor {
 		ArrayList<String> familyList = new ArrayList<>();
 
 		try {
-			FileReader file = new FileReader(new File("Test2.ged"));
+			FileReader file = new FileReader(new File("GedComInput.ged"));
 			Scanner inputFileData = new Scanner(file);
 
 			while(inputFileData.hasNextLine()) {				
