@@ -5,7 +5,14 @@ import java.io.File;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.Year;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
@@ -17,16 +24,18 @@ class Individual {
 	String sex = "";
 	String famc = "";
 	String fams = "";
+	Date birthday;
 
 	// birthdate and death date will add later
 	//constructor for Individual class
-	public Individual(String indi,String name,String sex, String famc, String fams)
+	public Individual(String indi,String name,String sex, String famc, String fams,Date birthday)
 	{
 		this.indi = indi;
 		this.name = name;
 		this.sex = sex;
 		this.famc = famc;
 		this.fams = fams;
+		this.birthday=birthday;
 	}
 }
 
@@ -55,6 +64,8 @@ public class GedcomProcessor {
 		String sex = "";
 		String famc = "";
 		String fams = "";
+		Date birthday= new Date();
+		String bday="";
 
 		String famId = "";
 		String husbId = "";
@@ -83,6 +94,7 @@ public class GedcomProcessor {
 
 		Boolean indiHasDataBool = false;
 		Boolean familyHasDataBool = false;
+		String rootTag="";
 
 		Map < String, Individual > individualMap = new HashMap <> (); 
 		Map < String, Family > familyMap = new HashMap <> (); 
@@ -100,7 +112,7 @@ public class GedcomProcessor {
 					switch(inputElements[1]) {
 					case "INDI" :
 						if(indiHasDataBool == true) {
-							Individual  member = new Individual(indi, name, sex, fams, famc);
+							Individual  member = new Individual(indi, name, sex, fams, famc, birthday);
 
 							individualMap.put(indi, member);
 							individualIdList.add(indi);
@@ -127,6 +139,22 @@ public class GedcomProcessor {
 						break;
 					case "FAMC" :
 						famc = inputElements[2];							
+						break;
+					case "BIRT":
+						rootTag="BIRT";
+						break;
+					case "DATE":
+						if(rootTag=="BIRT")
+						{
+							bday=inputElements[2]+" "+inputElements[3]+" "+inputElements[4];
+							SimpleDateFormat formatter = new SimpleDateFormat("dd MMM yyyy");
+							try {
+								birthday = formatter.parse(bday);
+							} catch (ParseException e) {
+								e.printStackTrace();
+							}
+							rootTag="";
+						}
 						break;
 					case "FAM" :
 						if(familyHasDataBool == true) {
@@ -157,12 +185,12 @@ public class GedcomProcessor {
 				else {
 				}					
 			}
-
-
 			for(String itr: individualIdList){
 				Individual i = individualMap.get(itr);
-
-				System.out.println("Individual ID : " + itr + "\n"+"Name : " + i.name);
+				LocalDate today = LocalDate.now();
+				LocalDate ibday =  i.birthday.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+				long years = ChronoUnit.YEARS.between(ibday, today);
+				System.out.println("Individual ID : " + itr + "\n"+"Name : " + i.name+"\n"+"Age "+years);
 				System.out.println();
 			}
 
