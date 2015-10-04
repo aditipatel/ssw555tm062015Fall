@@ -45,18 +45,42 @@ class Family
 	String husbId = "";
 	String wifeId = "";
 	ArrayList<String> childIds = new ArrayList<String>();
+	Date marriageDate;
+	Date divorceDate;
 
-	public Family(String famId, String husbId, String wifeId, ArrayList<String> childIds) {
+	public Family(String famId, String husbId, String wifeId, ArrayList<String> childIds, Date marriagedate,Date divorcedate) {
 		this.famId = famId;
 		this.husbId = husbId;
 		this.wifeId = wifeId;
 		this.childIds = childIds;
+		this.marriageDate=marriagedate;
+		this.divorceDate=divorcedate;
 	}
 
 }
 
 public class GedcomProcessor {
 
+	public static long calcAge(Date from, LocalDate to)
+	{
+		LocalDate today = to;
+		LocalDate ibday =  from.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+		long years = ChronoUnit.YEARS.between(ibday, today);
+		return years;
+	}
+	
+	public static void checkMarriageAge(Family f,Map < String, Individual >individualMap)
+	{
+		Date husbandbday = individualMap.get(f.husbId).birthday;
+		Date wifebday = individualMap.get(f.wifeId).birthday;
+		long husbMarrAge = calcAge(husbandbday,f.marriageDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
+		long wifeMarrAge = calcAge(wifebday,f.marriageDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
+		
+		if(husbMarrAge < 14|| wifeMarrAge < 14)
+		{
+			System.out.println("Error: Husband or wife's Age is less than 14 at the time of marriage for familyid:" + f.famId);
+		}
+	}
 	public static void main(String[] args){
 
 		String indi = "";
@@ -65,7 +89,9 @@ public class GedcomProcessor {
 		String famc = "";
 		String fams = "";
 		Date birthday= new Date();
-		String bday="";
+		Date marriagedate = new Date();
+		Date divorcedate= new Date();
+		String date="";
 
 		String famId = "";
 		String husbId = "";
@@ -146,10 +172,32 @@ public class GedcomProcessor {
 					case "DATE":
 						if(rootTag=="BIRT")
 						{
-							bday=inputElements[2]+" "+inputElements[3]+" "+inputElements[4];
+							date=inputElements[2]+" "+inputElements[3]+" "+inputElements[4];
 							SimpleDateFormat formatter = new SimpleDateFormat("dd MMM yyyy");
 							try {
-								birthday = formatter.parse(bday);
+								birthday = formatter.parse(date);
+							} catch (ParseException e) {
+								e.printStackTrace();
+							}
+							rootTag="";
+						}
+						if(rootTag=="MARR")
+						{
+							date=inputElements[2]+" "+inputElements[3]+" "+inputElements[4];
+							SimpleDateFormat formatter = new SimpleDateFormat("dd MMM yyyy");
+							try {
+								marriagedate = formatter.parse(date);
+							} catch (ParseException e) {
+								e.printStackTrace();
+							}
+							rootTag="";	
+						}
+						if(rootTag=="DIV")
+						{
+							date=inputElements[2]+" "+inputElements[3]+" "+inputElements[4];
+							SimpleDateFormat formatter = new SimpleDateFormat("dd MMM yyyy");
+							try {
+								divorcedate = formatter.parse(date);
 							} catch (ParseException e) {
 								e.printStackTrace();
 							}
@@ -158,7 +206,7 @@ public class GedcomProcessor {
 						break;
 					case "FAM" :
 						if(familyHasDataBool == true) {
-							com.gedcom.Family  family = new Family(famId, husbId, wifeId, childIds);
+							com.gedcom.Family  family = new Family(famId, husbId, wifeId, childIds,marriagedate,divorcedate);
 							familyMap.put(famId, family);
 							familyList.add(famId);
 
@@ -166,6 +214,8 @@ public class GedcomProcessor {
 							husbId = "";
 							wifeId = "";
 							childIds = new ArrayList<String>();
+							marriagedate = new Date();
+							divorcedate = new Date();
 							familyHasDataBool = false;
 						}
 						famId = inputElements[2];
@@ -179,7 +229,13 @@ public class GedcomProcessor {
 						break;
 					case "CHIL" :
 						childIds.add(inputElements[2]);							
-						break;							
+						break;	
+					case "MARR":
+						rootTag="MARR";
+						break;
+					case "DIV":
+						rootTag="DIV";
+						break;
 					}					
 				}
 				else {
@@ -187,9 +243,7 @@ public class GedcomProcessor {
 			}
 			for(String itr: individualIdList){
 				Individual i = individualMap.get(itr);
-				LocalDate today = LocalDate.now();
-				LocalDate ibday =  i.birthday.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-				long years = ChronoUnit.YEARS.between(ibday, today);
+				long years = calcAge(i.birthday,LocalDate.now());
 				System.out.println("Individual ID : " + itr + "\n"+"Name : " + i.name+"\n"+"Age "+years);
 				System.out.println();
 			}
@@ -198,6 +252,7 @@ public class GedcomProcessor {
 				Family f = familyMap.get(itr);
 				System.out.println("Family Id : "+ itr +"\n"+"Husband Id : " + f.husbId +"\n"+ "Husband's name " + individualMap.get(f.husbId).name +
 						"\n"+"Wifes Id : " + f.wifeId +"\n"+"Wifes Name : "+individualMap.get(f.wifeId).name);
+				checkMarriageAge(f,individualMap);
 				System.out.println();
 			}
 
