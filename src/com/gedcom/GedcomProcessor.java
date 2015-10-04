@@ -2,13 +2,11 @@
 package com.gedcom;
 
 import java.io.File;
-
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.time.Year;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -130,6 +128,8 @@ public class GedcomProcessor {
 		try {
 			FileReader file = new FileReader(new File("GedComInput.ged"));
 			Scanner inputFileData = new Scanner(file);
+			Individual  individual = null;
+			Family  family = null;
 
 			while(inputFileData.hasNextLine()) {				
 				String line = inputFileData.nextLine();
@@ -137,10 +137,10 @@ public class GedcomProcessor {
 				if(validTags.contains(inputElements[1])) {
 					switch(inputElements[1]) {
 					case "INDI" :
-						if(indiHasDataBool == true) {
-							Individual  member = new Individual(indi, name, sex, fams, famc, birthday);
+						if(indiHasDataBool) {
+							individual = new Individual(indi, name, sex, fams, famc, birthday);
 
-							individualMap.put(indi, member);
+							individualMap.put(indi, individual);
 							individualIdList.add(indi);
 
 							indi = "";
@@ -158,7 +158,6 @@ public class GedcomProcessor {
 						break;
 					case "SEX" :
 						sex = inputElements[2];
-						//dataSetBool = true;
 						break;
 					case "FAMS" :
 						fams = inputElements[2];							
@@ -205,8 +204,8 @@ public class GedcomProcessor {
 						}
 						break;
 					case "FAM" :
-						if(familyHasDataBool == true) {
-							com.gedcom.Family  family = new Family(famId, husbId, wifeId, childIds,marriagedate,divorcedate);
+						if(familyHasDataBool) {
+							family = new Family(famId, husbId, wifeId, childIds,marriagedate,divorcedate);
 							familyMap.put(famId, family);
 							familyList.add(famId);
 
@@ -238,9 +237,21 @@ public class GedcomProcessor {
 						break;
 					}					
 				}
-				else {
-				}					
+								
 			}
+			
+			if(null != indi && !"".equals(indi)){
+				individual = new Individual(indi, name, sex, fams, famc, birthday);
+				individualMap.put(indi, individual);
+				individualIdList.add(indi);
+			}
+			
+			if(null != famId && !"".equals(famId)){
+				family = new Family(famId, husbId, wifeId, childIds,marriagedate,divorcedate);
+				familyMap.put(famId, family);
+				familyList.add(famId);
+			}
+			
 			for(String itr: individualIdList){
 				Individual i = individualMap.get(itr);
 				long years = calcAge(i.birthday,LocalDate.now());
