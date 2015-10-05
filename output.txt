@@ -1,0 +1,8 @@
+Error US01: Death date of Jenny Craig (I9) occurs before current date.
+
+Error US01: Marriage date of Bob Joseph (I2) and Amy Doe (I1) occurs before current date.
+
+List US33: Amy Doe (I1) is orphan in family F2.
+
+List US33: Samuel Doe (I5) is orphan in family F2.
+
