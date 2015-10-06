@@ -38,6 +38,7 @@ import java.util.Scanner;
 		this.fams = fams;
 		this.birthDate = birthDate;
 		this.deathDate = deathDate;
+		this.isDeadBln = isDeadBln; 
 		}
 	}
 
@@ -98,14 +99,14 @@ import java.util.Scanner;
 
 			try {
 				
-				FileReader file = new FileReader("Test3.ged");
+				//FileReader file = new FileReader("Test3.ged");
 				
-				/* This code is for command line input. 
-				 * FileReader file = new FileReader(new File(args[0]));
+				// This code is for command line input. 
+				  FileReader file = new FileReader(new File(args[0]));
 				if (args.length==0) {
 				     System.out.println("Error: Bad command or filename. ");
 				     System.exit(0);
-				}*/
+				}
 				
 				PrintStream outs = new PrintStream(new File("output.txt"));
 		        System.setOut(outs);
