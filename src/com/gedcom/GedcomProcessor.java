@@ -1,3 +1,4 @@
+package com.gedcom;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -7,11 +8,17 @@ import java.io.PrintStream;
 import java.util.Date;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
+
+import com.gedcom.Family;
+import com.gedcom.Individual;
 
 	class Individual {
 		String indi = "";
@@ -181,6 +188,10 @@ import java.util.Scanner;
 		       
 		       checkUS33(); 	//List orphans
 		       
+		       checkUS27();     //List Individual Ages
+		       
+		       checkUS10();     //Check if marriage age is less than 14
+		       
 		       outs.close();
 			}
 			catch(FileNotFoundException e) {
@@ -228,6 +239,28 @@ import java.util.Scanner;
 			}
 		}
 
+		static void checkUS27()
+		{
+			for(String itr: individualIdList) {
+		    	 Individual i = individualMap.get(itr);	
+		    	 Family f = familyMap.get(i.famc);
+		    	 long years = getAge(i.birthDate,LocalDate.now());
+				 System.out.println("Individual ID : " + itr + "\n"+"Name : " + i.name+"\n"+"Age "+years);
+				 System.out.println(); 
+			}
+		}
+		
+		static void checkUS10()
+		{
+			for(String itr: familyList){
+				Family f = familyMap.get(itr);
+				if(f.marriageDate!=null)
+				{
+					checkMarriageAge(f,individualMap);
+				}
+				System.out.println();
+			}
+		}
 		static Date convertStringToDate(String nextLineString) {
 			
 			Date date = null;
@@ -257,5 +290,25 @@ import java.util.Scanner;
 			if (todayCal.get(Calendar.DAY_OF_YEAR) < birthDateCal.get(Calendar.DAY_OF_YEAR))
 				age--;
 			return age;
+		}
+		public static long getAge(Date from, LocalDate to)
+		{
+			LocalDate today = to;
+			LocalDate ibday =  from.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+			long years = ChronoUnit.YEARS.between(ibday, today);
+			return years;
+		}
+		
+		public static void checkMarriageAge(Family f,Map < String, Individual >individualMap)
+		{
+			Date husbandbday = individualMap.get(f.husbId).birthDate;
+			Date wifebday = individualMap.get(f.wifeId).birthDate;
+			long husbMarrAge = getAge(husbandbday,f.marriageDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
+			long wifeMarrAge = getAge(wifebday,f.marriageDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
+			
+			if(husbMarrAge < 14|| wifeMarrAge < 14)
+			{
+				System.out.println("Error US10: Husband or wife's Age is less than 14 at the time of marriage for familyid:" + f.famId);
+			}
 		}
 	}
