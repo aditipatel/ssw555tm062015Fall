@@ -194,7 +194,7 @@ import com.gedcom.Individual;
 		       
 		       checkUS02(); // check if marriage date is before birth date
 
-				checkUS04(); //check if death date is before birth date
+				checkUS03(); //check if death date is before birth date
 		       
 		       outs.close();
 			}
@@ -341,13 +341,13 @@ import com.gedcom.Individual;
 	 * an individual
 	 */
 
-	static void checkUS04() {
+	static void checkUS03() {
 		for (String itr : individualIdList) {
 			Individual i = individualMap.get(itr);
 
 			if ((i.birthDate != null) && (i.deathDate != null)) {
 				if (i.deathDate.before(i.birthDate)) {
-					System.out.println("Error US04:Death date of " + i.name +"("+i.indi+")"
+					System.out.println("Error US03:Death date of " + i.name +"("+i.indi+")"
 							+ " occurs before the birth date");
 				}
 			}
