@@ -347,7 +347,7 @@ import com.gedcom.Individual;
 
 			if ((i.birthDate != null) && (i.deathDate != null)) {
 				if (i.deathDate.before(i.birthDate)) {
-					System.out.println("Error US04:Death date of " + i.name + i.name+"("+i.indi+")"
+					System.out.println("Error US04:Death date of " + i.name +"("+i.indi+")"
 							+ " occurs before the birth date");
 				}
 			}
