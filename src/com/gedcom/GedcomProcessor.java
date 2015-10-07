@@ -192,6 +192,10 @@ import com.gedcom.Individual;
 		       
 		       checkUS10();     //Check if marriage age is less than 14
 		       
+		       checkUS02(); // check if marriage date is before birth date
+
+				checkUS04(); //check if death date is before birth date
+		       
 		       outs.close();
 			}
 			catch(FileNotFoundException e) {
@@ -311,4 +315,44 @@ import com.gedcom.Individual;
 				System.out.println("Error US10: Husband or wife's Age is less than 14 at the time of marriage for familyid:" + f.famId);
 			}
 		}
+		
+			/**
+	 * This method checks if there is a invalid marriage date ie marriage date
+	 * comes before birth date of an individual. It prints the name of the
+	 * individuals who have invalid marriage dates.
+	 */
+	static void checkUS02() {
+		for (String itr : individualIdList) {
+			Individual i = individualMap.get(itr);
+			Family f = familyMap.get(i.fams);
+
+			if ((i.fams != null) && (!(i.fams.isEmpty()))
+					&& (i.birthDate != null) && (f.marriageDate != null))
+				if (i.birthDate.after(f.marriageDate)) {
+					System.out.println("Error US02:Marriage date of " + i.name+"("+i.indi+")"
+							+ " is before the birth date");
+					System.out.println();
+				}
+		}
+	} // end of checkUS02
+
+	/**
+	 * This method verifies that birth of an individual occurs before death of
+	 * an individual
+	 */
+
+	static void checkUS04() {
+		for (String itr : individualIdList) {
+			Individual i = individualMap.get(itr);
+
+			if ((i.birthDate != null) && (i.deathDate != null)) {
+				if (i.deathDate.before(i.birthDate)) {
+					System.out.println("Error US04:Death date of " + i.name + i.name+"("+i.indi+")"
+							+ " occurs before the birth date");
+				}
+			}
+
+		}// end of for loop
+
+	}
 	}
