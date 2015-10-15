@@ -21,23 +21,23 @@ import com.gedcom.Family;
 import com.gedcom.Individual;
 
 	class Individual {
-		String indi = "";
-		String name = "";
-		String sex = "";
-		String famc = "";
-		String fams = "";
-		Date birthDate	= null;
-		Date deathDate	= null;
-		Boolean isDeadBln = false;
-		
-		//constructor for Individual class
-		
-		public Individual() {
-			
-		}
-		
-		public Individual(String indi,String name,String sex, String famc, String fams, Date birthDate, Date deathDate, Boolean isDeadBln)
-		{
+	String indi = "";
+	String name = "";
+	String sex = "";
+	ArrayList<String> famc = new ArrayList<String>();
+	ArrayList<String> fams = new ArrayList<String>();
+	Date birthDate = null;
+	Date deathDate = null;
+	Boolean isDeadBln = false;
+
+	// constructor for Individual class
+
+	public Individual() {
+
+	}
+
+	public Individual(String indi, String name, String sex, ArrayList<String> famc, ArrayList<String> fams,
+			Date birthDate, Date deathDate, Boolean isDeadBln) {
 		this.indi = indi;
 		this.name = name;
 		this.sex = sex;
@@ -45,9 +45,9 @@ import com.gedcom.Individual;
 		this.fams = fams;
 		this.birthDate = birthDate;
 		this.deathDate = deathDate;
-		this.isDeadBln = isDeadBln; 
-		}
+		this.isDeadBln = isDeadBln;
 	}
+}
 
 	class Family {
 		
@@ -155,9 +155,11 @@ import com.gedcom.Individual;
 															break;
 											case "SEX" :	member.sex = inputElements[2];
 															break;
-											case "FAMS" :	member.fams = inputElements[2].replace("@", "");							
+											case "FAMS":
+													member.fams.add(inputElements[2].replace("@", ""));
 															break;
-											case "FAMC" :	member.famc = inputElements[2].replace("@", "");							
+											case "FAMC":
+													member.famc.add(inputElements[2].replace("@", ""));
 															break;
 											case "HUSB" :	family.husbId = inputElements[2].replace("@", "");							
 															break;
@@ -194,7 +196,9 @@ import com.gedcom.Individual;
 		       
 		       checkUS02(); // check if marriage date is before birth date
 
-				checkUS03(); //check if death date is before birth date
+		       checkUS03(); //check if death date is before birth date
+			
+		       checkUS11(); // check if bigamy exists
 		       
 		       outs.close();
 			}
@@ -355,4 +359,23 @@ import com.gedcom.Individual;
 		}// end of for loop
 
 	}
+	static void checkUS11() {
+		for (String itr : individualIdList) {
+			Individual i = individualMap.get(itr);
+			int activemarriage = 0;
+			int index = 0;
+			if ((i.fams.size() > 1)) {
+				do {
+					Family f = familyMap.get(i.fams.get(index++));
+					if (f.isDivorceBln == false) {
+						++activemarriage;
+					}
+					if (activemarriage > 1) {
+						System.out.println("Error US11: Bigamy detected for " + i.name + "(" + i.indi + ")");
+						break;
+					}
+				}while (index<i.fams.size());
+			}
+		}
 	}
+}
