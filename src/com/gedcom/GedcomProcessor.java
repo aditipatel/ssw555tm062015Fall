@@ -1,4 +1,4 @@
-package com.gedcom;
+
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -13,12 +13,11 @@ import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 
-import com.gedcom.Family;
-import com.gedcom.Individual;
 
 	class Individual {
 	String indi = "";
@@ -58,6 +57,8 @@ import com.gedcom.Individual;
 		Date marriageDate = null;
 		Date divorceDate = null;
 		Boolean isDivorceBln = false;
+		
+		
 		
 		public Family() {
 			
@@ -156,10 +157,10 @@ import com.gedcom.Individual;
 											case "SEX" :	member.sex = inputElements[2];
 															break;
 											case "FAMS":
-													member.fams.add(inputElements[2].replace("@", ""));
+															member.fams.add(inputElements[2].replace("@", ""));
 															break;
 											case "FAMC":
-													member.famc.add(inputElements[2].replace("@", ""));
+															member.famc.add(inputElements[2].replace("@", ""));
 															break;
 											case "HUSB" :	family.husbId = inputElements[2].replace("@", "");							
 															break;
@@ -199,6 +200,11 @@ import com.gedcom.Individual;
 		       checkUS03(); //check if death date is before birth date
 			
 		       checkUS11(); // check if bigamy exists
+		       
+		       checkUS21(); // check Correct gender for role
+		       
+		       checkUS28(); // List siblings in families by age
+
 		       
 		       outs.close();
 			}
@@ -241,7 +247,7 @@ import com.gedcom.Individual;
 		    	 Individual i = individualMap.get(itr);	
 		    	 Family f = familyMap.get(i.famc);
 		    	 if(getAge(i.birthDate) < 18 && f != null && individualMap.get(f.husbId).isDeadBln == true && individualMap.get(f.wifeId).isDeadBln == true ) {
-		    		 System.out.println("List US33: "+i.name+" (" + i.indi +") is orphan in family " + i.famc+ ".");
+		    		 System.out.println("List US33: "+i.name+"(" + i.indi +") is orphan in family " + i.famc+ ".");
 				     System.out.println();
 		    	 }
 			}
@@ -269,6 +275,58 @@ import com.gedcom.Individual;
 				System.out.println();
 			}
 		}
+		
+		static void checkUS21()
+		{
+			System.out.println();
+			for(String itr: familyList) {			
+		    	 Family f = familyMap.get(itr);	
+		    	 if(f.husbId != null && !(individualMap.get(f.husbId).sex).equals("M"))	{	    		   
+				     System.out.println("Error US21: Husband "+individualMap.get(f.husbId).name+"(" + f.husbId +") in family"+"(" + f.famId +") should be male." );	    
+				     System.out.println();
+		    	 }
+		    	 if(f.wifeId != null && !(individualMap.get(f.wifeId).sex).equals("F"))	{	    
+			    	 System.out.println("Error US21: Wife "+individualMap.get(f.wifeId).name+"(" + f.wifeId +") in family"+"(" + f.famId +") should be female." );
+			    	 System.out.println();
+		    	 }
+		    	
+			}
+		}
+		
+		static void checkUS28()
+		{
+			System.out.println("US28: List siblings in families by age" );
+			System.out.println();
+			for(String itr: familyList) {
+				 Family f = familyMap.get(itr);					    
+		    	 if(f.childIds != null && !f.childIds.isEmpty())	{
+		    		System.out.println("	List siblings in family"+"(" + f.famId +") by age" );	
+					for (int j = 0; j < f.childIds.size() - 1; j++) {
+				        for (int k = j + 1; k < f.childIds.size(); k++) {
+				            if (getAge(individualMap.get(f.childIds.get(j)).birthDate) > getAge(individualMap.get(f.childIds.get(k)).birthDate)) {
+				                String temp = f.childIds.get(k);
+				                f.childIds.set(k, f.childIds.get(j));
+				                f.childIds.set(j, temp);
+				            }
+				        }
+				    }
+					
+					for (int j = 0; j < f.childIds.size(); j++) {
+						 Individual i = individualMap.get(f.childIds.get(j));
+						 System.out.println("		"+(j+1)+ "    "+i.name+"(" + i.indi +") and "+ (i.sex.equals("M")? "his" :"her" )+" age is "+getAge(i.birthDate));	    
+					}
+					 System.out.println();
+		    	 }
+		    	 else {
+		    		 System.out.println("	No siblings in Family"+"(" + f.famId +")" );		
+		    	 }
+		    	 f = null;
+		    	 System.out.println();
+		    	 
+			}
+		}
+		
+		    		
 		static Date convertStringToDate(String nextLineString) {
 			
 			Date date = null;
