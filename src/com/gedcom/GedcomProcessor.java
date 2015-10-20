@@ -13,7 +13,6 @@ import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
@@ -207,6 +206,7 @@ import java.util.Scanner;
 
 		       
 		       checkUS08(); //Check if birth is before marriage or death in the family.
+		       
 		       outs.close();
 			}
 			catch(FileNotFoundException e) {
