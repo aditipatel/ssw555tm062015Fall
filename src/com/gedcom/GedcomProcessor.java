@@ -200,6 +200,7 @@ import com.gedcom.Individual;
 			
 		       checkUS11(); // check if bigamy exists
 		       
+		       checkUS08(); //Check if birth is before marriage or death in the family.
 		       outs.close();
 			}
 			catch(FileNotFoundException e) {
@@ -251,7 +252,7 @@ import com.gedcom.Individual;
 		{
 			for(String itr: individualIdList) {
 		    	 Individual i = individualMap.get(itr);	
-		    	 Family f = familyMap.get(i.famc);
+		    	 Family f = familyMap.get(i.famc.get(0));
 		    	 long years = getAge(i.birthDate,LocalDate.now());
 				 System.out.println("Individual ID : " + itr + "\n"+"Name : " + i.name+"\n"+"Age "+years);
 				 System.out.println(); 
@@ -377,5 +378,34 @@ import com.gedcom.Individual;
 				}while (index<i.fams.size());
 			}
 		}
+	}
+	
+	static void checkUS08() {
+
+		for (String fam : familyList) {
+			Family f = familyMap.get(fam);
+			if (f.isDivorceBln == false) {
+				for (String child : f.childIds) {
+					Individual i = individualMap.get(child);
+					if (f.marriageDate.after(i.birthDate)) {
+						System.out.println("Error US08: Birthdate of " + i.name + "(" + i.indi
+								+ ") is before marriage date of the family");
+						break;
+					}
+
+				}
+			} else {
+				for (String child : f.childIds) {
+					Individual i = individualMap.get(child);
+					if (f.divorceDate.after(i.birthDate)) {
+						System.out.println("Error US08: Birthdate of " + i.name + "(" + i.indi
+								+ ") is before divorce date of the family");
+						break;
+					}
+
+				}
+			}
+		}
+
 	}
 }
