@@ -269,8 +269,7 @@ import java.util.Scanner;
 		static void checkUS27()
 		{
 			for(String itr: individualIdList) {
-		    	 Individual i = individualMap.get(itr);	
-		    	 Family f = familyMap.get(i.famc.get(0));
+		    	 Individual i = individualMap.get(itr);
 		    	 long years = getAge(i.birthDate,LocalDate.now());
 				 System.out.println("Individual ID : " + itr + "\n"+"Name : " + i.name+"\n"+"Age "+years);
 				 System.out.println(); 
@@ -466,7 +465,7 @@ import java.util.Scanner;
 					Individual i = individualMap.get(child);
 					if (f.marriageDate.after(i.birthDate)) {
 						System.out.println("Error US08: Birthdate of " + i.name + "(" + i.indi
-								+ ") is before marriage date of the family");
+								+ ") is before marriage date of the family "+"("+f.famId+")");
 						break;
 					}
 
@@ -476,7 +475,7 @@ import java.util.Scanner;
 					Individual i = individualMap.get(child);
 					if (f.divorceDate.after(i.birthDate)) {
 						System.out.println("Error US08: Birthdate of " + i.name + "(" + i.indi
-								+ ") is before divorce date of the family");
+								+ ") is before divorce date of the family "+"("+f.famId+")");
 						break;
 					}
 
