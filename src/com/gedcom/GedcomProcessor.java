@@ -12,8 +12,11 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
@@ -27,6 +30,8 @@ import java.util.Scanner;
 	Date birthDate = null;
 	Date deathDate = null;
 	Boolean isDeadBln = false;
+	String firstName="";
+	String lastName="";
 
 	// constructor for Individual class
 
@@ -35,7 +40,7 @@ import java.util.Scanner;
 	}
 
 	public Individual(String indi, String name, String sex, ArrayList<String> famc, ArrayList<String> fams,
-			Date birthDate, Date deathDate, Boolean isDeadBln) {
+			Date birthDate, Date deathDate, Boolean isDeadBln,String firstName,String lastName) {
 		this.indi = indi;
 		this.name = name;
 		this.sex = sex;
@@ -44,6 +49,8 @@ import java.util.Scanner;
 		this.birthDate = birthDate;
 		this.deathDate = deathDate;
 		this.isDeadBln = isDeadBln;
+		this.firstName = firstName;
+		this.lastName = lastName;
 	}
 }
 
@@ -152,6 +159,8 @@ import java.util.Scanner;
 										switch(inputElements[1]) {
 																
 											case "NAME" :	member.name = inputElements[2] + " " + inputElements[3].replace("/", "") ;
+															member.firstName = inputElements[2];
+															member.lastName =  inputElements[3].replace("/", "");
 															break;
 											case "SEX" :	member.sex = inputElements[2];
 															break;
@@ -207,6 +216,9 @@ import java.util.Scanner;
 		       
 		       checkUS08(); //Check if birth is before marriage or death in the family.
 		       
+		       checkUS06(); //checks if the divorce date is before the death date of both husband and wife
+		       
+		       checkUS16();//All male members of a family should have the same last name
 		       outs.close();
 			}
 			catch(FileNotFoundException e) {
@@ -387,16 +399,22 @@ import java.util.Scanner;
 	static void checkUS02() {
 		for (String itr : individualIdList) {
 			Individual i = individualMap.get(itr);
-			Family f = familyMap.get(i.fams);
+			if (i.fams != null && !i.fams.isEmpty()){
+				
+				for(String spouse : i.fams){
+					Family f = familyMap.get(spouse);
 
-			if ((i.fams != null) && (!(i.fams.isEmpty()))
-					&& (i.birthDate != null) && (f.marriageDate != null))
+					if ((i.birthDate != null) && (f.marriageDate != null)){
 				if (i.birthDate.after(f.marriageDate)) {
 					System.out.println("Error US02:Marriage date of " + i.name+"("+i.indi+")"
 							+ " is before the birth date");
 					System.out.println();
-				}
-		}
+						}//end of if
+					}//end of null check if
+				}//end of fams for loop
+				
+			}//end of fams and famc null check
+		}//end of for loop
 	} // end of checkUS02
 
 	/**
@@ -412,6 +430,7 @@ import java.util.Scanner;
 				if (i.deathDate.before(i.birthDate)) {
 					System.out.println("Error US03:Death date of " + i.name +"("+i.indi+")"
 							+ " occurs before the birth date");
+					System.out.println();
 				}
 			}
 
@@ -465,5 +484,53 @@ import java.util.Scanner;
 			}
 		}
 
+	}
+	
+	/**
+	 * This method checks if the divorce date is before the death date of both the partners
+	 */
+	 static void checkUS06(){
+		 for(String itr:individualIdList){
+			 Individual i = individualMap.get(itr);
+			 if((i.fams != null) &&(!(i.fams.isEmpty()))){
+				 for(String spouse : i.fams){
+					 Family f = familyMap.get(spouse);
+					 if((i.isDeadBln) && (f.isDivorceBln)){
+						 if((f.divorceDate).after(i.deathDate)){
+							 System.out.println("Error US06:Divorce date of "+ i.name + "("+f.famId+")"
+									 + " occurs after the death date");
+							 						 System.out.println();
+						 }
+					 }
+				 }
+				 
+			 }
+		 }
+	 }
+	 
+	 /**
+	  * This method checks if all male names have the same lastname in a family
+	  */
+	 static void checkUS16(){
+		 
+		 for(String itr:familyList){
+			 Family f = familyMap.get(itr);
+			  Individual husband = individualMap.get(f.husbId);
+			  	List<String> childId = f.childIds;
+			  		for(String ch:childId){
+			  			Individual child = individualMap.get(ch);
+			  			if((child.sex).equals("M")){
+			  			if(!(husband.lastName.equals(child.lastName))){
+			  				System.out.println("Error US16 : The family where all male members don't have the "
+			  						+ " same last name is Family id : "+f.famId );
+			  				System.out.println("The name of the individual"
+			  						+" is " + child.firstName + " " +child.lastName);
+			  			}
+			 
+			  			}
+			  				 
+				}
+			  	
+		 }
 	}
 }
