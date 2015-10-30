@@ -1,3 +1,5 @@
+package com.gedcom;
+
 
 
 import java.io.File;
@@ -5,16 +7,14 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.util.Date;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -199,7 +199,7 @@ import java.util.Scanner;
 		       
 		       checkUS33(); 	//List orphans
 		       
-		       checkUS27();     //List Individual Ages
+		      checkUS27();     //List Individual Ages
 		       
 		       checkUS10();     //Check if marriage age is less than 14
 		       
@@ -219,6 +219,11 @@ import java.util.Scanner;
 		       checkUS06(); //checks if the divorce date is before the death date of both husband and wife
 		       
 		       checkUS16();//All male members of a family should have the same last name
+		       
+		       checkUS30();//This method prints all the individuals who are living married.
+		       
+		       checkUS29();//This method lists all the individuals who are deceased.
+		       
 		       outs.close();
 			}
 			catch(FileNotFoundException e) {
@@ -523,7 +528,7 @@ import java.util.Scanner;
 			  				System.out.println("Error US16 : The family where all male members don't have the "
 			  						+ " same last name is Family id : "+f.famId );
 			  				System.out.println("The name of the individual"
-			  						+" is " + child.firstName + " " +child.lastName);
+			  						+" is " + child.firstName + " " +child.lastName+"\r\n");
 			  			}
 			 
 			  			}
@@ -532,4 +537,45 @@ import java.util.Scanner;
 			  	
 		 }
 	}
+	 
+	 /**
+	  * This method prints all the individuals who are living married.
+	  */
+	 static void checkUS30(){
+		 System.out.println("checkUS30 : List of the individuals who are married and alive"+"\r\n");
+		 ArrayList<String> marriedAliveIdList = new ArrayList<>();
+		 for(String itr:individualIdList){
+			 Individual i = individualMap.get(itr);
+			 if(!(i.isDeadBln)){
+				if((i.fams != null) &&(!(i.fams.isEmpty()))){
+					for(String famId : i.fams){
+						Family f = familyMap.get(famId);
+						
+						if(!(f.isDivorceBln) && (!(marriedAliveIdList.contains(itr)))){
+							
+							marriedAliveIdList.add(itr);
+							System.out.println( "Individual id: "+i.indi +" " + " Individual name: "+i.name);
+							System.out.println();
+						}
+					
+					
+					}
+				}
+			 }
+		 }
+		 
+	 }
+	 
+	 /**
+	  * This method lists all the individuals who are deceased.
+	  */
+	 static void checkUS29(){
+		 System.out.println("The list of the individuals who are deceased:"+"\r\n");
+		 for(String itr:individualIdList){
+			 Individual i = individualMap.get(itr);
+			 if(i.isDeadBln){
+				 System.out.println(i.name);
+			 }
+		 }
+	 }
 }
