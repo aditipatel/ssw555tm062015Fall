@@ -199,7 +199,7 @@ import java.util.Scanner;
 		       
 		       checkUS33(); 	//List orphans
 		       
-		      checkUS27();     //List Individual Ages
+		      // checkUS27();     //List Individual Ages
 		       
 		       checkUS10();     //Check if marriage age is less than 14
 		       
