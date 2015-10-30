@@ -570,7 +570,7 @@ import java.util.Scanner;
 	  * This method lists all the individuals who are deceased.
 	  */
 	 static void checkUS29(){
-		 System.out.println("The list of the individuals who are deceased:"+"\r\n");
+		 System.out.println("Check US29 : The list of the individuals who are deceased:"+"\r\n");
 		 for(String itr:individualIdList){
 			 Individual i = individualMap.get(itr);
 			 if(i.isDeadBln){
