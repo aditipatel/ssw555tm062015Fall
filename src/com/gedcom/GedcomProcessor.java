@@ -226,6 +226,7 @@ import java.util.Scanner;
 		       
 		       checkUS19(); //Check if there are any marriages to first cousins
 		       
+		       checkUS17(); //Check for marriage between decendants
 		       outs.close();
 			}
 			catch(FileNotFoundException e) {
@@ -622,5 +623,40 @@ import java.util.Scanner;
             return true;
         }
         return false;
+	}
+	public static void checkUS17()
+	{
+		for (String fam : familyList) {
+			Family f = familyMap.get(fam);
+			ArrayList<String> decendants = new ArrayList<String>();
+			findDecendents(f.husbId,decendants);
+			if(decendants.contains(f.wifeId))
+			{
+				System.out.println("Error US17: Marriage to decendents detected for individuals " + f.husbId
+						+ " and " + f.wifeId);
+			}
+			findDecendents(f.wifeId,decendants);
+			if(decendants.contains(f.husbId))
+			{
+				System.out.println("Error US17: Marriage to decendents detected for individuals " + f.husbId
+						+ " and " + f.wifeId);
+			}
+		}
+	}
+	public static void findDecendents(String ind1,ArrayList<String> decendents) {
+		Individual i1 = individualMap.get(ind1);
+		for (int i = 0; i < i1.fams.size(); i++) {
+			String f1 = i1.fams.get(i);
+			Family f = familyMap.get(f1);
+			if (f.childIds.size() == 0) {
+
+			} else {
+				for (int j = 0; j < f.childIds.size(); j++) {
+					String child = f.childIds.get(j);
+					decendents.add(child);
+					findDecendents(child,decendents);
+				}
+			}
+		}
 	}
 }
