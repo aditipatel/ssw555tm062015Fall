@@ -224,6 +224,8 @@ import java.util.Scanner;
 		       
 		       checkUS29();//This method lists all the individuals who are deceased.
 		       
+		       checkUS19(); //Check if there are any marriages to first cousins
+		       
 		       outs.close();
 			}
 			catch(FileNotFoundException e) {
@@ -578,4 +580,47 @@ import java.util.Scanner;
 			 }
 		 }
 	 }
+	 static void checkUS19() {
+		for (String fam : familyList) {
+			Family f = familyMap.get(fam);
+			if (isCousin(f.husbId, f.wifeId) == true) {
+				System.out.println("Error US19: Marriage between first cousins detected for individuals "+f.husbId+
+						" and "+ f.wifeId);
+			}
+		}
+	}
+
+	static boolean isCousin(String ind1, String ind2){
+		ArrayList<String> list = new ArrayList<String>();
+		Individual i1 = individualMap.get(ind1);
+		Individual i2 = individualMap.get(ind2);
+		if(i1.famc.size()==0 || i2.famc.size()==0){
+			return false;
+		}
+		String fam1 = i1.famc.get(0);
+		String fam2 = i2.famc.get(0);
+		Family f1 = familyMap.get(fam1);
+		Family f2 = familyMap.get(fam2);
+		Individual h1 = individualMap.get(f1.husbId);
+		Individual h2 = individualMap.get(f2.husbId);
+		Individual w1 = individualMap.get(f1.wifeId);
+		Individual w2 = individualMap.get(f2.wifeId);
+		if(h1.famc.size()!=0){
+			list.add(h1.famc.get(0));
+		}
+		if(h2.famc.size()!=0){
+			list.add(h2.famc.get(0));
+		}
+		if(w1.famc.size()!=0){
+			list.add(w1.famc.get(0));
+		}
+		if(w2.famc.size()!=0){
+			list.add(w2.famc.get(0));
+		}
+		Set inputSet = new HashSet(list);
+        if(inputSet.size()< list.size()){
+            return true;
+        }
+        return false;
+	}
 }
