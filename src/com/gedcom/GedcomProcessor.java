@@ -1,4 +1,4 @@
-package com.gedcom;
+
 
 
 
@@ -16,9 +16,11 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.Set;
 
 
 	class Individual {
@@ -227,6 +229,11 @@ import java.util.Scanner;
 		       checkUS19(); //Check if there are any marriages to first cousins
 		       
 		       checkUS17(); //Check for marriage between decendants
+		       
+		       checkUS15(); // Check for Fewer than 15 siblings
+		       
+		       checkUS31();  // List living single
+		       
 		       outs.close();
 			}
 			catch(FileNotFoundException e) {
@@ -333,7 +340,7 @@ import java.util.Scanner;
 					
 					for (int j = 0; j < f.childIds.size(); j++) {
 						 Individual i = individualMap.get(f.childIds.get(j));
-						 System.out.println("		"+(j+1)+ "    "+i.name+"(" + i.indi +") and "+ (i.sex.equals("M")? "his" :"her" )+" age is "+getAge(i.birthDate));	    
+						 System.out.println("		"+(j+1)+ ".  "+i.name+"(" + i.indi +") and "+ (i.sex.equals("M")? "his" :"her" )+" age is "+getAge(i.birthDate));	    
 					}
 					 System.out.println();
 		    	 }
@@ -559,14 +566,11 @@ import java.util.Scanner;
 							marriedAliveIdList.add(itr);
 							System.out.println( "Individual id: "+i.indi +" " + " Individual name: "+i.name);
 							System.out.println();
-						}
-					
-					
+						}					
 					}
 				}
 			 }
-		 }
-		 
+		 }		 
 	 }
 	 
 	 /**
@@ -624,6 +628,8 @@ import java.util.Scanner;
         }
         return false;
 	}
+	
+	
 	public static void checkUS17()
 	{
 		for (String fam : familyList) {
@@ -643,6 +649,7 @@ import java.util.Scanner;
 			}
 		}
 	}
+	
 	public static void findDecendents(String ind1,ArrayList<String> decendents) {
 		Individual i1 = individualMap.get(ind1);
 		for (int i = 0; i < i1.fams.size(); i++) {
@@ -658,5 +665,46 @@ import java.util.Scanner;
 				}
 			}
 		}
+	}
+	
+	public static void checkUS15() {
+		for (String fam : familyList) {
+			Family f = familyMap.get(fam);
+			if (f.childIds.size() >= 15) {
+				System.out.println("Error US15: Family ("+f.famId+") should have fewer than 15 siblings.");
+			}
+		}
+	}
+	
+	public static void checkUS31() {
+		 System.out.println("checkUS31 : List of the individuals who are single and alive");
+		 int cnt =0;
+		for(String itr:individualIdList){
+			 Individual i = individualMap.get(itr);
+			 if(!(i.isDeadBln) && getAge(i.birthDate) >= 18){
+				if((i.fams == null)  || (i.fams.isEmpty())){
+					System.out.println("	"+ ++cnt + ".  "+ i.name +" (" + i.indi +")");
+				}
+				else {
+					boolean isSingle = false;
+					for(int j = 0; j < i.fams.size(); j++){
+						 Family f = familyMap.get( i.fams.get(j));
+						 String spouseId = (i.sex.equals("M") ? f.wifeId : f.husbId );
+						
+						 if((individualMap.get(spouseId).isDeadBln)|| (f.isDivorceBln)){
+							 isSingle = true;
+						 }
+						 else {
+							 isSingle = false;
+							 break;
+						 }
+					}
+					if(isSingle == true) {
+						 System.out.println("	"+ ++cnt + ".  "+ i.name +" (" + i.indi +")");
+					 }
+							
+				}
+			 }
+		 }		 
 	}
 }
