@@ -234,6 +234,10 @@ import java.util.Set;
 		       
 		       checkUS31();  // List living single
 		       
+		       checkUS36(); //List recent deaths
+		       
+		       checkUS25(); //Unique first names in families
+		       
 		       outs.close();
 			}
 			catch(FileNotFoundException e) {
@@ -706,5 +710,42 @@ import java.util.Set;
 				}
 			 }
 		 }		 
+	}
+	public static void checkUS36() {
+		for (String itr : individualIdList) {
+			Individual i = individualMap.get(itr);
+			if (i.deathDate != null) {
+				LocalDate today = LocalDate.now();
+				LocalDate idday = i.deathDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+				long days = ChronoUnit.DAYS.between(idday, today);
+				if (days < 30 && days >= 0) {
+					System.out.println("\nInfo US36: Recent death detected Individual ID : " + itr + "\n" + "Name : "
+							+ i.name + "\n" + "Days Since Death " + days);
+					System.out.println();
+				}
+
+			}
+		}
+	}
+
+	public static void checkUS25() {
+		for (String fam : familyList) {
+			Family f = familyMap.get(fam);
+			for (int i = 0; i < f.childIds.size(); i++)
+				for (int j = i + 1; j < f.childIds.size(); j++) {
+					{
+						Individual c1 = individualMap.get(f.childIds.get(i));
+						Individual c2 = individualMap.get(f.childIds.get(j));
+						if (c1.name.equalsIgnoreCase(c2.name)) {
+							if (c1.birthDate.compareTo(c2.birthDate) == 0) {
+								System.out.println(
+										"\nERROR US25: Individuals with same name and birthdate detected for Family:"
+												+ f.famId + " individual ids " + c1.indi + " and " + c2.indi);
+								System.out.println();
+							}
+						}
+					}
+				}
+		}
 	}
 }
