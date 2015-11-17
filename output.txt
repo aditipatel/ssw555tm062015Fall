@@ -46,7 +46,7 @@ Age 55
 
 Individual ID : I11
 Name : Jhonny Parisi
-Age 25
+Age 165
 
 Individual ID : I12
 Name : Sunny Parisi
@@ -162,7 +162,7 @@ Error US21: Wife Jack Doe(I21) in family(F10) should be female.
 
 Error US21: Wife Jack Doe(I21) in family(F10) should be female.
 
-US28: List siblings in families by age
+List US28: siblings in families by age
 
 	List siblings in family(F1) by age
 		1.  Jimmy Chang(I14) and his age is 15
@@ -200,7 +200,7 @@ US28: List siblings in families by age
 
 
 	List siblings in family(F6) by age
-		1.  Jhonny Parisi(I11) and his age is 25
+		1.  Jhonny Parisi(I11) and his age is 165
 
 
 	No siblings in Family(F7)
@@ -215,6 +215,7 @@ US28: List siblings in families by age
 
 Error US08: Birthdate of Jimmy Chang(I14) is before divorce date of the family (F1)
 Error US08: Birthdate of Hannah Kim(I4) is before marriage date of the family (F4)
+Error US08: Birthdate of Jhonny Parisi(I11) is before marriage date of the family (F6)
 Error US06:Divorce date of Amy Doe(F1) occurs after the death date
 
 Error US06:Divorce date of Bob Joseph(F1) occurs after the death date
@@ -277,7 +278,7 @@ checkUS31 : List of the individuals who are single and alive
 
 Info US36: Recent death detected Individual ID : I1
 Name : Amy Doe
-Days Since Death 8
+Days Since Death 9
 
 
 ERROR US25: Individuals with same name and birthdate detected for Family:F3 individual ids I18 and I19
@@ -287,4 +288,15 @@ ErrorUS18 : The individuals : Kim and Jack cant be married as they are siblings
 ErrorUS18 : The individuals : Kim and Jack cant be married as they are siblings
 
 ErrorUS22 : The duplicate elements in individual id list are :[I31]
+
 ErrorUS22 : The duplicate elements in family id list are :[F10]
+
+ErrorUS07 : Age of the Jhonny Parisi(I11) is 165, it should be less than 150
+
+List US38: Upcoming birthdays in next 60 days
+   1  23 days remaining for Sam Doe(I13)'s birthday.
+   2  48 days remaining for Mahesh Shah(I15)'s birthday.
+   3  47 days remaining for Mital Patel(I16)'s birthday.
+   4  46 days remaining for Ramesh Patel(I17)'s birthday.
+   5  47 days remaining for Raja Doe(I25)'s birthday.
+

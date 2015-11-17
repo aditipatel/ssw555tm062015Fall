@@ -1,4 +1,4 @@
-package com.gedcom;
+//package com.gedcom;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -8,6 +8,7 @@ import java.io.PrintStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.Period;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -240,6 +241,10 @@ import java.util.Set;
 		       
 		       checkUS22(); //All individual IDs should be unique and all family IDs should be unique
 		       
+		       CheckUS07(); // age should be Less then 150 years old
+		       
+		       CheckUS38(); //List upcoming birthdays
+		       
 		       outs.close();
 			}
 			catch(FileNotFoundException e) {
@@ -328,7 +333,7 @@ import java.util.Set;
 		
 		static void checkUS28()
 		{
-			System.out.println("US28: List siblings in families by age" );
+			System.out.println("List US28: siblings in families by age" );
 			System.out.println();
 			for(String itr: familyList) {
 				 Family f = familyMap.get(itr);					    
@@ -788,4 +793,45 @@ import java.util.Set;
 	System.out.println();
 	System.out.println("ErrorUS22 : The duplicate elements in family id list are :" + findDuplicates(familyList));
 	}
+	
+	public static void CheckUS07() {
+		System.out.println();
+		for(String itr:individualIdList) {
+			Individual i = individualMap.get(itr);
+			if(!(i.isDeadBln) && getAge(i.birthDate) >= 150) {
+				System.out.println("ErrorUS07 : Age of the " + i.name +"(" + i.indi+") is "+ getAge(i.birthDate) +", it should be less than 150");				
+			}
+		}	
+		System.out.println();
+	}
+	
+	public static void CheckUS38() {
+		System.out.println("List US38: Upcoming birthdays in next 60 days" );
+		int cnt = 0;
+		for(String itr:individualIdList) {
+			Individual i = individualMap.get(itr);
+			if(!(i.isDeadBln && i.birthDate != null) ) {			
+			
+				LocalDate today = LocalDate.now();					
+				LocalDate birthday = i.birthDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+				LocalDate nextBDay = birthday.withYear(today.getYear());
+
+				//If your birthday has occurred this year already, add 1 to the year.
+				if (nextBDay.isBefore(today) || nextBDay.isEqual(today)) {
+				    nextBDay = nextBDay.plusYears(1);
+				}
+
+				long p2 = ChronoUnit.DAYS.between(today, nextBDay);
+				if(p2  < 60) {
+					System.out.println("   "+ ++cnt +"  " + p2 +" days remaining for "+ i.name + "(" + i.indi + ")'s birthday.");
+				}
+			}			
+		}		
+		System.out.println();
+	}	
 }
+	
+	
+	
+	
+	
