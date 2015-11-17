@@ -1,5 +1,3 @@
-Error US01: Death date of Amy Doe (I1) occurs before current date.
-
 Error US01: Death date of Bob Joseph (I2) occurs before current date.
 
 Error US01: Death date of Jenny Craig (I10) occurs before current date.
@@ -40,7 +38,7 @@ Age 55
 
 Individual ID : I9
 Name : Kendra Jacob
-Age 49
+Age 50
 
 Individual ID : I10
 Name : Jenny Craig
@@ -75,8 +73,8 @@ Name : Ramesh Patel
 Age 46
 
 Individual ID : I18
-Name : Nice Doe
-Age 34
+Name : GOOD Doe
+Age 33
 
 Individual ID : I19
 Name : Good Doe
@@ -127,13 +125,16 @@ Name : Tommy Doe
 Age 23
 
 Individual ID : I31
-Name : Lalo Doe
+Name : Dummy Doe
+Age 21
+
+Individual ID : I31
+Name : Dummy Doe
 Age 21
 
 Error US10: Husband or wife's Age is less than 14 at the time of marriage for familyid:F1
 
 Error US10: Husband or wife's Age is less than 14 at the time of marriage for familyid:F2
-
 
 Error US10: Husband or wife's Age is less than 14 at the time of marriage for familyid:F3
 
@@ -142,6 +143,9 @@ Error US10: Husband or wife's Age is less than 14 at the time of marriage for fa
 
 
 Error US10: Husband or wife's Age is less than 14 at the time of marriage for familyid:F8
+
+
+
 
 Error US02:Marriage date of Amy Doe(I1) is before the birth date
 
@@ -152,7 +156,11 @@ Error US03:Death date of John Doe(I3) occurs before the birth date
 Error US11: Bigamy detected for Tim Parisi(I8)
 Error US11: Bigamy detected for Jenny Craig(I10)
 
-Error US21: Husband Amy Doe(I1) in family(F2) should be male.
+Error US21: Husband Mital Patel(I16) in family(F2) should be male.
+
+Error US21: Wife Jack Doe(I21) in family(F10) should be female.
+
+Error US21: Wife Jack Doe(I21) in family(F10) should be female.
 
 US28: List siblings in families by age
 
@@ -162,12 +170,10 @@ US28: List siblings in families by age
 
 	No siblings in Family(F2)
 
-	No siblings in Family(F9)
-
 	List siblings in family(F3) by age
 		1.  Samuel Doe(I5) and his age is 15
 		2.  Sam Doe(I13) and her age is 19
-		3.  Lalo Doe(I31) and his age is 21
+		3.  Dummy Doe(I31) and his age is 21
 		4.  Tommy Doe(I30) and his age is 23
 		5.  Vicky Doe(I29) and his age is 24
 		6.  Anuj Doe(I28) and his age is 25
@@ -180,8 +186,8 @@ US28: List siblings in families by age
 		13.  Amy Doe(I1) and her age is 30
 		14.  Jack Doe(I21) and his age is 31
 		15.  Kim Doe(I20) and his age is 32
-		16.  Good Doe(I19) and his age is 33
-		17.  Nice Doe(I18) and her age is 34
+		16.  GOOD Doe(I18) and her age is 33
+		17.  Good Doe(I19) and his age is 33
 
 
 	List siblings in family(F4) by age
@@ -200,6 +206,12 @@ US28: List siblings in families by age
 	No siblings in Family(F7)
 
 	No siblings in Family(F8)
+
+	No siblings in Family(F9)
+
+	No siblings in Family(F10)
+
+	No siblings in Family(F10)
 
 Error US08: Birthdate of Jimmy Chang(I14) is before divorce date of the family (F1)
 Error US08: Birthdate of Hannah Kim(I4) is before marriage date of the family (F4)
@@ -230,6 +242,10 @@ Individual id: I15  Individual name: Mahesh Shah
 
 Individual id: I16  Individual name: Mital Patel
 
+Individual id: I24  Individual name: Rani Doe
+
+Individual id: I25  Individual name: Raja Doe
+
 Check US29 : The list of the individuals who are deceased:
 
 Amy Doe
@@ -238,22 +254,37 @@ John Doe
 Hannah Kim
 Jenny Craig
 Error US19: Marriage between first cousins detected for individuals I12 and I13
+Error US19: Marriage between first cousins detected for individuals I20 and I21
+Error US19: Marriage between first cousins detected for individuals I20 and I21
 Error US17: Marriage to decendents detected for individuals I11 and I10
 Error US15: Family (F3) should have fewer than 15 siblings.
 checkUS31 : List of the individuals who are single and alive
 	1.  Jhonny Parisi (I11)
 	2.  Ramesh Patel (I17)
-	3.  Nice Doe (I18)
+	3.  GOOD Doe (I18)
 	4.  Good Doe (I19)
 	5.  Kim Doe (I20)
 	6.  Jack Doe (I21)
 	7.  Jine Doe (I22)
 	8.  Hack Doe (I23)
-	9.  Rani Doe (I24)
-	10.  Raja Doe (I25)
-	11.  Oliver Doe (I26)
-	12.  Shagun Doe (I27)
-	13.  Anuj Doe (I28)
-	14.  Vicky Doe (I29)
-	15.  Tommy Doe (I30)
-	16.  Lalo Doe (I31)
+	9.  Oliver Doe (I26)
+	10.  Shagun Doe (I27)
+	11.  Anuj Doe (I28)
+	12.  Vicky Doe (I29)
+	13.  Tommy Doe (I30)
+	14.  Dummy Doe (I31)
+	15.  Dummy Doe (I31)
+
+Info US36: Recent death detected Individual ID : I1
+Name : Amy Doe
+Days Since Death 8
+
+
+ERROR US25: Individuals with same name and birthdate detected for Family:F3 individual ids I18 and I19
+
+ErrorUS18 : The individuals : Kim and Jack cant be married as they are siblings
+
+ErrorUS18 : The individuals : Kim and Jack cant be married as they are siblings
+
+ErrorUS22 : The duplicate elements in individual id list are :[I31]
+ErrorUS22 : The duplicate elements in family id list are :[F10]

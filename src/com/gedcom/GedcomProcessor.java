@@ -1,6 +1,4 @@
-
-
-
+package com.gedcom;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -237,6 +235,10 @@ import java.util.Set;
 		       checkUS36(); //List recent deaths
 		       
 		       checkUS25(); //Unique first names in families
+		       
+		       checkUS18(); //siblings should not marry
+		       
+		       checkUS22(); //All individual IDs should be unique and all family IDs should be unique
 		       
 		       outs.close();
 			}
@@ -747,5 +749,43 @@ import java.util.Set;
 					}
 				}
 		}
+	}
+	
+	/**
+	 * Check siblings should not marry
+	 */
+	public static void checkUS18(){
+		for(String fam:familyList){
+			Family f = familyMap.get(fam);
+				 Individual i1 = individualMap.get(f.husbId);
+				Individual i2 = individualMap.get(f.wifeId);
+				if(!(i1.famc.isEmpty()) && !(i2.famc.isEmpty())){
+				if((i1.famc).equals(i2.famc)){
+					System.out.println("ErrorUS18 : The individuals : "+ i1.firstName + " and " + i2.firstName + " cant be married as they are siblings");
+					System.out.println();
+				}
+				}
+			
+		}
+		
+	}
+	
+	public static Set<String> findDuplicates(List<String> ListContainingDuplicates){
+		final Set<String> duplicateValues = new HashSet<String>();
+		final Set<String> set1 = new HashSet<String>();
+			for(String i:ListContainingDuplicates){
+				if(!(set1.add(i))){
+					duplicateValues.add(i);
+				}
+			}
+			 return duplicateValues;
+		}
+	/**
+	 * Check for unique family ids and child ids
+	 */
+	public static void checkUS22(){
+	System.out.println("ErrorUS22 : The duplicate elements in individual id list are :" + findDuplicates(individualIdList));	
+	System.out.println();
+	System.out.println("ErrorUS22 : The duplicate elements in family id list are :" + findDuplicates(familyList));
 	}
 }
